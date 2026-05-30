@@ -1,30 +1,7 @@
-"""
-main.py — Whatson entry point
-==============================
-Python 3.11 or 3.12 recommended.
-
-Quick start:
-  pip install -r requirements.txt
-  pip install ddgs
-  ollama pull qwen3:4b
-  python main.py
-
-Streaming behaviour:
-  Each agent streams its response live:
-    • While thinking  → dim rolling "Thinking: ..." line (updates in-place)
-    • First answer token → thinking line clears, clean answer streams in
-    • Tool calls → "  🔧 web_search… ✓" status line
-
-In-session commands:
-  /agents    List agents and their tools
-  /verbose   Toggle verbose status messages
-  /help      Show help
-  quit       Exit
-"""
-
 import asyncio
 import sys
 import time
+import uuid 
 
 from langchain_core.messages import HumanMessage
 
@@ -103,24 +80,12 @@ async def main():
             "final_answer":  "",
             "approved":      False,
         }
-
+        #config
+        thread_config = {"configurable": {"thread_id": str(uuid.uuid4())}}
         t0 = time.time()
 
         try:
-            # stream_graph_synthesis runs the full graph via astream_events().
-            #
-            # What happens step by step:
-            #   1. plan_node      → router decides agents (no streaming output)
-            #   2. approval_node  → user sees plan, approves/edits/cancels
-            #   3. dispatch_node  → agents run in parallel, each streams:
-            #                         dim "Thinking: ..." (in-place)
-            #                         → clears → answer tokens stream in
-            #   4. synthesize_node → if multiple agents: synthesis LLM also
-            #                         streams thinking then answer tokens
-            #
-            # The function returns the final state dict.
-            result = await stream_graph_synthesis(graph, initial_state)
-
+            result = await stream_graph_synthesis(graph, initial_state, thread_config)
         except Exception as exc:
             print(f"\n[ERROR] {exc}\n")
             if config.VERBOSE:

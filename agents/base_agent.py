@@ -1,24 +1,3 @@
-"""
-agents/base_agent.py — Abstract base class for all Whatson sub-agents
-======================================================================
-run()       → used internally by dispatch_node (returns full string result)
-stream()    → used by the streaming path in main.py via astream_events()
-
-Streaming architecture:
-  graph.astream_events(input, version="v2") yields typed event dicts.
-  We filter on:
-    event["event"] == "on_chat_model_stream"   → individual token chunk
-    event["metadata"]["langgraph_node"]        → which node emitted it
-
-  Each AIMessageChunk has:
-    chunk.content                              → answer token (str)
-    chunk.additional_kwargs.get("reasoning_content")  → thinking token (str)
-
-  For qwen3 via Ollama with reasoning=True, the model streams thinking tokens
-  first (reasoning_content), then answer tokens (content).
-  We surface this split to the caller so the UI can show/hide reasoning.
-"""
-
 from abc import ABC, abstractmethod
 from typing import List, AsyncIterator
 
@@ -61,15 +40,16 @@ class BaseAgent(ABC):
         ])
         return prompt | self.llm | StrOutputParser()
 
-    async def run(self, subtask: str) -> str:
+    async def run(self, subtask: str, messages: list = None) -> str:
         """
         Non-streaming invoke — used internally by dispatch_node.
         Returns the complete answer as a plain string.
         """
         if self.get_tools():
-            state = await self._agent.ainvoke(
-                {"messages": [HumanMessage(content=subtask)]}
-            )
+            input_messages = list(messages or []) + [HumanMessage(content=subtask)] 
+            state = await self._agent.ainvoke({
+                "messages": input_messages
+                })  
             ai = [m for m in state["messages"] if m.__class__.__name__ == "AIMessage"]
             return ai[-1].content if ai else "[No response]"
         return await self._agent.ainvoke({"subtask": subtask})

@@ -1,19 +1,8 @@
-"""
-orchestrator/router.py — LLM-based task router
-===============================================
-Analyses the user task and returns a plan:
-  [{"agent": "research", "subtask": "..."}, {"agent": "code", "subtask": "..."}]
-
-The router is a plain LLM chain (no tools).
-temperature=0 in ORCHESTRATOR_LLM ensures consistent, parseable JSON output.
-
-Fallback: if JSON parsing fails, routes the full task to the general agent.
-"""
-
 import json
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from config import ORCHESTRATOR_LLM
+import sys
 
 _ROUTER_PROMPT = PromptTemplate.from_template("""You are Whatson — an intelligent AI orchestrator that delegates tasks to specialist agents.
 
@@ -56,11 +45,16 @@ async def route_task(task: str, agent_registry: dict) -> list[dict]:
 
     chain = _ROUTER_PROMPT | ORCHESTRATOR_LLM | StrOutputParser()
     raw = ""
+    thinking_buf = ""   
     async for chunk in chain.astream({"task": task, "agents_desc": agents_desc}):
-        print(chunk, end="", flush=True)
         raw += chunk
-    print("") 
-    # Strip markdown fences some models add despite instructions
+        thinking_buf = (thinking_buf + chunk)[-55:]                
+        sys.stdout.write(f"\r  📋 Thinking: {thinking_buf:<55}")   
+        sys.stdout.flush()                                          
+
+    sys.stdout.write("\r" + " " * 72 + "\r")                       
+    sys.stdout.flush()    
+
     clean = raw.strip()
     if clean.startswith("```"):
         clean = "\n".join(clean.split("\n")[1:-1]).strip()

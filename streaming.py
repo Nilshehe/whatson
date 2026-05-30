@@ -152,7 +152,7 @@ async def stream_agent_response(
     return "".join(answer_parts)
 
 
-async def stream_graph_synthesis(graph, initial_state: dict) -> dict:
+async def stream_graph_synthesis(graph, initial_state, config=None) -> dict:
     """
     Run the full Whatson graph with streaming for the synthesize node.
 
@@ -168,7 +168,7 @@ async def stream_graph_synthesis(graph, initial_state: dict) -> dict:
     # Track whether we've entered the synthesize node
     in_synthesize = False
 
-    async for event in graph.astream_events(initial_state, version="v2"):
+    async for event in graph.astream_events(initial_state, version="v2", config=config):
         kind = event.get("event", "")
         meta = event.get("metadata", {})
         node = meta.get("langgraph_node", "")
