@@ -23,6 +23,7 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langgraph.graph import StateGraph, END
+from langgraph.checkpoint.memory import MemorySaver
 
 from orchestrator.state import WhatsonState
 from orchestrator.router import route_task
@@ -223,4 +224,4 @@ def build_graph():
     g.add_edge("dispatch",   "synthesize")
     g.add_edge("synthesize", END)
 
-    return g.compile()
+    return g.compile(checkpointer=MemorySaver())
