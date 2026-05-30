@@ -28,6 +28,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import BaseTool
 from langgraph.prebuilt import create_react_agent
+from langgraph.checkpoint.memory import InMemorySaver
 
 
 class BaseAgent(ABC):
@@ -52,6 +53,7 @@ class BaseAgent(ABC):
                 model=self.llm,
                 tools=tools,
                 prompt=self.get_system_prompt(),
+                checkpointer=InMemorySaver()
             )
         prompt = ChatPromptTemplate.from_messages([
             ("system", self.get_system_prompt()),

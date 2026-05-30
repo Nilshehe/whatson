@@ -43,6 +43,7 @@ async def plan_node(state: WhatsonState) -> dict:
         print(f"\n📋 PLANNING: '{state['task'][:80]}'")
 
     plan = await route_task(state["task"], _registry())
+    
 
     if VERBOSE:
         for item in plan:
