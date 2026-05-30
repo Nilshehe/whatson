@@ -50,7 +50,8 @@ async def main():
     print("Initialising Whatson…", end="", flush=True)
     graph = build_graph()
     print(" ✓\n")
-
+    #config
+    thread_config = {"configurable": {"thread_id": str(uuid.uuid4())}}
     while True:
         try:
             task = input("You: ").strip()
@@ -80,8 +81,6 @@ async def main():
             "final_answer":  "",
             "approved":      False,
         }
-        #config
-        thread_config = {"configurable": {"thread_id": str(uuid.uuid4())}}
         t0 = time.time()
 
         try:
