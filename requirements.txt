@@ -1,0 +1,21 @@
+# Whatson — Python 3.11 or 3.12 recommended
+# Install: pip install -r requirements.txt
+
+# Core framework
+langchain>=1.0.0
+langgraph>=1.0.0
+langgraph-prebuilt>=1.0.0
+
+# Ollama local model backend
+langchain-ollama>=1.0.0
+
+# Tools
+ddgs>=9.0.0              # DuckDuckGo web search (replaces duckduckgo-search)
+numexpr>=2.8.0           # Safe math expression evaluator
+
+# Optional: swap Ollama for cloud providers
+# langchain-openai         # pip install langchain-openai  -> ChatOpenAI
+# langchain-anthropic      # pip install langchain-anthropic -> ChatAnthropic
+
+# Streaming / terminal
+# (no extra packages needed — uses built-in ANSI escape codes)
