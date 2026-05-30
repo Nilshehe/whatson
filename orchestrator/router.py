@@ -55,8 +55,11 @@ async def route_task(task: str, agent_registry: dict) -> list[dict]:
     )
 
     chain = _ROUTER_PROMPT | ORCHESTRATOR_LLM | StrOutputParser()
-    raw   = await chain.ainvoke({"task": task, "agents_desc": agents_desc})
-
+    raw = ""
+    async for chunk in chain.astream({"task": task, "agents_desc": agents_desc}):
+        print(chunk, end="", flush=True)
+        raw += chunk
+    print("") 
     # Strip markdown fences some models add despite instructions
     clean = raw.strip()
     if clean.startswith("```"):
