@@ -90,6 +90,7 @@ async def stream_agent_response(
     subtask: str,
     agent_name: str = "",
     node_filter: str | None = None,
+    history: list = None,   
 ) -> str:
     """
     Stream a single agent's response with live thinking display.
@@ -111,7 +112,8 @@ async def stream_agent_response(
     # Plain LLM chains expect {"subtask": "..."}
     if hasattr(runnable, "nodes"):
         # It's a compiled LangGraph (ReAct agent from create_react_agent)
-        inp = {"messages": [HumanMessage(content=subtask)]}
+        prev = list(history or [])
+        inp = {"messages": prev + [HumanMessage(content=subtask)]}
     else:
         inp = {"subtask": subtask}
 

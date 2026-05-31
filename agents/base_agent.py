@@ -32,7 +32,6 @@ class BaseAgent(ABC):
                 model=self.llm,
                 tools=tools,
                 prompt=self.get_system_prompt(),
-                checkpointer=InMemorySaver()
             )
         prompt = ChatPromptTemplate.from_messages([
             ("system", self.get_system_prompt()),

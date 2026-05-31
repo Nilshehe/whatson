@@ -1,11 +1,3 @@
-"""
-agents/code_agent.py — Code generation and execution specialist
-===============================================================
-Generates Python code and can execute it immediately via execute_python.
-The ReAct loop allows the agent to write code, run it, observe the output,
-and fix bugs — all without human intervention.
-"""
-
 from agents.base_agent import BaseAgent
 from tools.code_executor import execute_python
 from config import CODE_LLM

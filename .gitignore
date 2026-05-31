@@ -1,4 +1,14 @@
-.venv
+.venv/
+venv/
 __ pycache__
-.gitnore
+.gitignore
 *.pyc
+bambu_client.py
+.env
+test.py
+~/.bambu_token
+D:\\Nils\\whatson\\tools\\cli_tools\\login.py
+bambu_token.json
+token.json
+*.token
+*.cache

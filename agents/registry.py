@@ -17,6 +17,7 @@ from agents.code_agent     import CodeAgent
 from agents.data_agent     import DataAgent
 from agents.creative_agent import CreativeAgent
 from agents.general_agent  import GeneralAgent
+from agents.printer_agent import BambuAgent
 
 AGENT_REGISTRY: dict = {
     "research": ResearchAgent(),
@@ -24,4 +25,5 @@ AGENT_REGISTRY: dict = {
     "data":     DataAgent(),
     "creative": CreativeAgent(),
     "general":  GeneralAgent(),
+    "printer": BambuAgent(),
 }

@@ -127,6 +127,7 @@ async def dispatch_node(state: WhatsonState) -> dict:
             runnable=agent.get_runnable(),
             subtask=subtask,
             agent_name=name,
+            history=state["messages"],
         )
         return name, result
 

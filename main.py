@@ -2,7 +2,9 @@ import asyncio
 import sys
 import time
 import uuid 
+from dotenv import load_dotenv
 
+load_dotenv()
 from langchain_core.messages import HumanMessage
 
 import config
@@ -73,8 +75,15 @@ async def main():
             continue
 
         # ── Build initial state ───────────────────────────────────────────────
+        snapshot = graph.get_state(thread_config)
+
+        history = []
+
+        if snapshot and snapshot.values:
+            history = snapshot.values.get("messages", [])
+        
         initial_state = {
-            "messages":      [HumanMessage(content=task)],
+            "messages":      history + [HumanMessage(content=task)],
             "task":          task,
             "plan":          [],
             "agent_results": {},
